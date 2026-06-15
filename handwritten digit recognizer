@@ -1,0 +1,29 @@
+import tensorflow as tf
+from tensorflow.keras import layers, models
+
+# 1. Load MNIST (built into Keras)
+(X_train, y_train), (X_test, y_test) = tf.keras.datasets.mnist.load_data()
+
+# 2. Normalize pixel values to 0-1
+X_train, X_test = X_train / 255.0, X_test / 255.0
+
+# 3. Build a simple neural network
+model = models.Sequential([
+    layers.Flatten(input_shape=(28, 28)),      # flatten 28x28 image
+    layers.Dense(128, activation='relu'),      # hidden layer
+    layers.Dropout(0.2),                       # prevent overfitting
+    layers.Dense(10, activation='softmax')     # 10 output classes
+])
+
+model.compile(
+    optimizer='adam',
+    loss='sparse_categorical_crossentropy',
+    metrics=['accuracy']
+)
+
+# 4. Train
+model.fit(X_train, y_train, epochs=5, validation_split=0.1)
+
+# 5. Evaluate
+test_loss, test_acc = model.evaluate(X_test, y_test)
+print(f"Test accuracy: {test_acc:.2%}")
